@@ -1,0 +1,16 @@
+{
+  "name": "omega-lembretes",
+  "version": "2.0.0",
+  "private": true,
+  "description": "O.M.E.G.A. — lembretes pessoais com sincronização entre aparelhos.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node servidor/index.js",
+    "dev": "node --watch servidor/index.js",
+    "test": "node --test testes/*.test.js",
+    "redefinir-senha": "node servidor/redefinir-senha.js"
+  }
+}

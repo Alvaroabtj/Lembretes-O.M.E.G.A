@@ -1,15 +1,99 @@
-O.M.E.G.A. — PWA
+O.M.E.G.A. — Lembretes
+======================
 
-Arquivos:
-- index.html: aplicativo
-- manifest.webmanifest: identificação e configuração de instalação
-- service-worker.js: cache para abrir offline
-- icons/: ícones do aplicativo
+Lembretes pessoais com avisos, repetição, listas, calendário e sincronização
+entre aparelhos.
 
-Como publicar:
-1. Envie todos os arquivos mantendo a estrutura de pastas para uma hospedagem estática com HTTPS (por exemplo, GitHub Pages).
-2. Abra o endereço HTTPS no Chrome do Android.
-3. Use o botão "Instalar" quando aparecer ou o menu do Chrome > Instalar app / Adicionar à tela inicial.
 
-Os lembretes continuam no IndexedDB do navegador/dispositivo. O PWA não usa servidor de banco de dados nem API. O HTTPS é necessário para o Service Worker e a instalação PWA (exceto localhost).
-Faça backups regulares pelo botão "Exportar backup". Limpar os dados do navegador pode apagar os lembretes.
+COMO LIGAR
+----------
+Precisa do Node.js 22.13 ou mais novo. Não há nada para instalar.
+
+  npm start             liga o servidor em http://localhost:3000
+  npm run dev           liga e reinicia a cada alteração no código do servidor
+  npm test              roda os testes
+
+Se a porta 3000 estiver ocupada, escolha outra. No PowerShell:
+
+  $env:PORT=3001; npm start
+
+Também dá para abrir o index.html direto, ou publicar só o site numa hospedagem
+estática. Nesse caso tudo funciona, menos conta e sincronização: os lembretes
+ficam apenas no navegador.
+
+
+COMO ESCREVER UM LEMBRETE
+-------------------------
+Digite como fala. Exemplos:
+
+  Pagar internet todo dia 10 às 9h #casa !alta
+  Reunião amanhã 14h30
+  Academia toda segunda 7h
+  Tirar o bolo em 40 minutos
+  Consulta depois de amanhã às 3 da tarde
+
+  #nome                    coloca na lista (cria se não existir)
+  !alta  !media  !baixa    define a prioridade
+
+O que foi entendido aparece em etiquetas. Clique numa etiqueta para descartá-la.
+
+
+AVISOS
+------
+O navegador só avisa com o O.M.E.G.A. aberto em alguma aba. Para ser avisado com
+ele fechado, use uma das opções:
+
+  Ajustes > Baixar agenda (.ics)       inclui os lembretes na sua agenda
+  Conta > Agenda no celular            endereço para assinar; atualiza sozinho
+                                       (o servidor precisa estar na internet)
+
+
+PASTAS
+------
+  index.html, css/, js/, icons/   o site
+  servidor/                       o back-end (Node + SQLite, sem dependências)
+  testes/                         testes automáticos
+  dados/                          o banco do servidor. Não vai para o GitHub.
+                                  Faça cópia desta pasta.
+
+
+PUBLICAR O SERVIDOR
+-------------------
+Variáveis de ambiente:
+
+  PORT            porta (padrão 3000)
+  NODE_ENV        production, para aceitar conexões de fora do computador
+  HOST            endereço específico, se precisar
+  OMEGA_BANCO     caminho do arquivo do banco (padrão dados/omega.db)
+  OMEGA_PROXY     1, se houver um proxy com HTTPS na frente (Render, Railway,
+                  Nginx). Não ligue sem proxy.
+
+Publique sempre com HTTPS e num serviço com disco permanente: o banco é um
+arquivo e some se o disco for apagado a cada publicação.
+
+Alguém esqueceu a senha? No computador do servidor:
+
+  npm run redefinir-senha -- pessoa@exemplo.com
+
+
+API
+---
+  GET    /api/sessao         quem está conectado
+  POST   /api/sessao         entrar            { email, senha }
+  DELETE /api/sessao         sair
+  POST   /api/conta          criar conta       { nome, email, senha }
+  PATCH  /api/conta          nome ou senha     { nome, senhaAtual, novaSenha }
+  DELETE /api/conta          excluir conta     { senha }
+  POST   /api/sincronizar    trocar mudanças   { desde, mudancas }
+  POST   /api/agenda         criar ou trocar o endereço da agenda
+  DELETE /api/agenda         desligar o endereço
+  GET    /agenda/<codigo>.ics
+  GET    /api/saude
+
+
+QUEM TINHA A VERSÃO INSTALADA (PWA)
+-----------------------------------
+A versão antiga guardava o site em cache e pode continuar aparecendo. Abra uma
+vez o endereço com ?v=2 no final (exemplo: https://seusite/index.html?v=2).
+O site novo remove o cache antigo e mantém os lembretes.
+Não limpe os dados do navegador: isso apaga os lembretes que não estão na conta.

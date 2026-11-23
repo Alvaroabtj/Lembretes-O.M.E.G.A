@@ -1,0 +1,9 @@
+# Banco com as contas e os lembretes: nunca vai para o repositório
+dados/
+*.db
+*.db-shm
+*.db-wal
+
+node_modules/
+.env
+.claude/
