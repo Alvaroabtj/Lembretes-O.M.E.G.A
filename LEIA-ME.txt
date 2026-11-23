@@ -1,0 +1,15 @@
+O.M.E.G.A. — PWA
+
+Arquivos:
+- index.html: aplicativo
+- manifest.webmanifest: identificação e configuração de instalação
+- service-worker.js: cache para abrir offline
+- icons/: ícones do aplicativo
+
+Como publicar:
+1. Envie todos os arquivos mantendo a estrutura de pastas para uma hospedagem estática com HTTPS (por exemplo, GitHub Pages).
+2. Abra o endereço HTTPS no Chrome do Android.
+3. Use o botão "Instalar" quando aparecer ou o menu do Chrome > Instalar app / Adicionar à tela inicial.
+
+Os lembretes continuam no IndexedDB do navegador/dispositivo. O PWA não usa servidor de banco de dados nem API. O HTTPS é necessário para o Service Worker e a instalação PWA (exceto localhost).
+Faça backups regulares pelo botão "Exportar backup". Limpar os dados do navegador pode apagar os lembretes.

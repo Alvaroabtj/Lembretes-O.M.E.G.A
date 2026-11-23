@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080d18">
+  <meta name="description" content="O.M.E.G.A. — seu sistema pessoal de lembretes, com armazenamento local.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="O.M.E.G.A.">
+  <title>O.M.E.G.A. — Lembretes</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070b13;
+      --panel: #101827;
+      --panel2: #131f31;
+      --line: #24334a;
+      --muted: #8fa2bd;
+      --text: #edf5ff;
+      --blue: #54b8ff;
+      --cyan: #6ce7f5;
+      --red: #ff6b83;
+      --green: #59dfad;
+      --amber: #ffc56b
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at 80% -10%, #12304d 0, transparent 42%), var(--bg);
+      color: var(--text);
+      font: 15px/1.45 system-ui, -apple-system, Segoe UI, sans-serif;
+      min-height: 100vh
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit
+    }
+
+    button {
+      cursor: pointer
+    }
+
+    .shell {
+      max-width: 850px;
+      margin: auto;
+      padding: 24px 17px 50px
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 5px 0 25px
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .orb {
+      width: 43px;
+      height: 43px;
+      border: 1px solid #4a9ed1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 22px #2799df55, inset 0 0 16px #2799df22;
+      color: var(--cyan);
+      font-weight: 800;
+      letter-spacing: -2px
+    }
+
+    .brand h1 {
+      font-size: 17px;
+      letter-spacing: 3px;
+      margin: 0
+    }
+
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 2px;
+      margin-top: 2px
+    }
+
+    .status {
+      font-size: 11px;
+      color: var(--green);
+      border: 1px solid #286b5c;
+      padding: 6px 9px;
+      border-radius: 30px;
+      white-space: nowrap
+    }
+
+    .hero {
+      margin-bottom: 21px
+    }
+
+    .eyebrow {
+      color: var(--cyan);
+      font-size: 10px;
+      letter-spacing: 2.5px;
+      font-weight: 700
+    }
+
+    .hero h2 {
+      font-size: clamp(27px, 7vw, 38px);
+      line-height: 1.1;
+      margin: 8px 0
+    }
+
+    .hero p {
+      color: var(--muted);
+      margin: 0
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 22px 0
+    }
+
+    .stat,
+    .panel {
+      background: linear-gradient(145deg, #121e30, #0d1522);
+      border: 1px solid var(--line);
+      border-radius: 16px
+    }
+
+    .stat {
+      padding: 13px
+    }
+
+    .stat span {
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 25px;
+      margin-top: 4px
+    }
+
+    .panel {
+      padding: 17px;
+      margin-top: 14px
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px
+    }
+
+    .panel h3 {
+      font-size: 14px;
+      letter-spacing: .5px;
+      margin: 0
+    }
+
+    .primary {
+      border: 0;
+      background: linear-gradient(110deg, #208bd0, #36c1d2);
+      color: #04111d;
+      font-weight: 800;
+      padding: 11px 15px;
+      border-radius: 11px;
+      box-shadow: 0 5px 20px #168dc044
+    }
+
+    .secondary,
+    .filter {
+      background: #172438;
+      color: #c8d8ed;
+      border: 1px solid #2a3c55;
+      border-radius: 10px;
+      padding: 9px 11px
+    }
+
+    .filters {
+      display: flex;
+      gap: 7px;
+      overflow: auto;
+      padding-bottom: 3px
+    }
+
+    .filter {
+      font-size: 12px;
+      white-space: nowrap
+    }
+
+    .filter.active {
+      border-color: var(--blue);
+      color: var(--cyan);
+      background: #12304a
+    }
+
+    .list {
+      display: grid;
+      gap: 9px
+    }
+
+    .item {
+      border: 1px solid #26364d;
+      background: #0c1421;
+      border-radius: 13px;
+      padding: 13px;
+      display: grid;
+      grid-template-columns: 25px 1fr auto;
+      gap: 10px;
+      align-items: start
+    }
+
+    .check {
+      width: 21px;
+      height: 21px;
+      border-radius: 7px;
+      border: 1px solid #526a87;
+      background: #111d2d;
+      color: #06131d;
+      display: grid;
+      place-items: center;
+      margin-top: 1px
+    }
+
+    .item.done {
+      opacity: .55
+    }
+
+    .item.done .item-title {
+      text-decoration: line-through
+    }
+
+    .item-title {
+      font-weight: 650;
+      overflow-wrap: anywhere
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 8px
+    }
+
+    .tag {
+      font-size: 10px;
+      color: #b9cbe2;
+      background: #17263a;
+      border-radius: 20px;
+      padding: 4px 7px
+    }
+
+    .tag.high {
+      color: #ff9eae;
+      background: #3b1d2a
+    }
+
+    .tag.medium {
+      color: #ffd18c;
+      background: #382b19
+    }
+
+    .tag.low {
+      color: #83dfc2;
+      background: #16342e
+    }
+
+    .actions {
+      display: flex;
+      gap: 5px
+    }
+
+    .iconbtn {
+      border: 1px solid #2b3d55;
+      background: #142135;
+      color: #a9c3df;
+      border-radius: 8px;
+      width: 31px;
+      height: 31px
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 28px 10px
+    }
+
+    .empty b {
+      display: block;
+      color: #c8d9ec;
+      margin-bottom: 5px
+    }
+
+    .modal-back {
+      position: fixed;
+      inset: 0;
+      background: #02060dcc;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 12px;
+      z-index: 5
+    }
+
+    .modal-back.show {
+      display: flex
+    }
+
+    .modal {
+      width: min(100%, 560px);
+      max-height: 92vh;
+      overflow: auto;
+      background: #101a2a;
+      border: 1px solid #30445f;
+      border-radius: 20px;
+      padding: 19px;
+      box-shadow: 0 20px 80px #000b
+    }
+
+    .modal h3 {
+      margin: 0 0 15px;
+      font-size: 18px
+    }
+
+    .field {
+      margin: 12px 0
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      color: #a9bdd5;
+      margin-bottom: 6px;
+      letter-spacing: .5px
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      background: #091321;
+      border: 1px solid #2b3e58;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 12px;
+      outline: none
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px #399ee522
+    }
+
+    .field textarea {
+      min-height: 76px;
+      resize: vertical
+    }
+
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 9px;
+      margin-top: 18px
+    }
+
+    .modal-actions button {
+      flex: 1
+    }
+
+    .tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px
+    }
+
+    .tools button {
+      font-size: 12px
+    }
+
+    footer {
+      text-align: center;
+      color: #637891;
+      font-size: 10px;
+      letter-spacing: 1px;
+      margin: 24px 0 0
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #d8f7ff;
+      color: #061522;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 650;
+      display: none;
+      z-index: 9;
+      max-width: 90%;
+      text-align: center
+    }
+
+    @media(min-width:650px) {
+      .modal-back {
+        align-items: center
+      }
+
+      .shell {
+        padding-top: 32px
+      }
+
+      .item {
+        padding: 15px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <div class="orb">Ω</div>
+        <div>
+          <h1>O.M.E.G.A.</h1><small>PERSONAL REMINDER SYSTEM</small>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px"><button class="secondary" id="installBtn"
+          style="display:none;padding:7px 9px;font-size:11px">＋ Instalar</button>
+        <div class="status">● ARMAZENAMENTO LOCAL</div>
+      </div>
+    </header>
+    <section class="hero">
+      <div class="eyebrow">CENTRAL DE ORGANIZAÇÃO</div>
+      <h2>Seus planos,<br>sob controle.</h2>
+      <p>Registre o que importa. A O.M.E.G.A. mantém tudo organizado neste dispositivo.</p>
+    </section>
+    <section class="stats">
+      <div class="stat"><span>Ativos</span><strong id="activeCount">0</strong></div>
+      <div class="stat"><span>Para hoje</span><strong id="todayCount">0</strong></div>
+      <div class="stat"><span>Concluídos</span><strong id="doneCount">0</strong></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head">
+        <h3>LEMBRETES</h3><button class="primary" id="newBtn">＋ Novo</button>
+      </div>
+      <div class="filters" id="filters">
+        <button class="filter active" data-filter="all">Todos</button><button class="filter"
+          data-filter="pending">Pendentes</button><button class="filter" data-filter="today">Hoje</button><button
+          class="filter" data-filter="done">Concluídos</button>
+      </div>
+      <div class="list" id="list" style="margin-top:13px"></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head">
+        <h3>DADOS E SEGURANÇA</h3>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 13px">Seus lembretes ficam salvos no banco local deste
+        navegador. Exporte uma cópia para não depender apenas deste aparelho.</p>
+      <div class="tools"><button class="secondary" id="exportBtn">↓ Exportar backup</button><button class="secondary"
+          id="importBtn">↑ Importar backup</button><button class="secondary" id="notifyBtn">Ativar
+          notificações</button><input type="file" id="importFile" accept="application/json" hidden></div>
+    </section>
+    <footer>O.M.E.G.A. CORE · LOCAL DATABASE · V1.0</footer>
+  </div>
+  <div class="modal-back" id="modalBack">
+    <div class="modal">
+      <h3 id="modalTitle">Novo lembrete</h3>
+      <form id="reminderForm">
+        <input type="hidden" id="editId">
+        <div class="field"><label for="title">TÍTULO *</label><input id="title" maxlength="100" required
+            placeholder="Ex.: Entregar atividade"></div>
+        <div class="field"><label for="description">DETALHES</label><textarea id="description" maxlength="1000"
+            placeholder="Informações adicionais (opcional)"></textarea></div>
+        <div class="two">
+          <div class="field"><label for="date">DATA</label><input id="date" type="date"></div>
+          <div class="field"><label for="time">HORÁRIO</label><input id="time" type="time"></div>
+        </div>
+        <div class="field"><label for="priority">PRIORIDADE</label><select id="priority">
+            <option value="low">Baixa</option>
+            <option value="medium" selected>Média</option>
+            <option value="high">Alta</option>
+          </select></div>
+        <div class="modal-actions"><button type="button" class="secondary" id="cancelBtn">Cancelar</button><button
+            class="primary" type="submit">Salvar lembrete</button></div>
+      </form>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    const DB_NAME = 'omega-reminders-db', STORE = 'reminders'; let db, currentFilter = 'all';
+    const $ = id => document.getElementById(id);
+    function openDB() {return new Promise((resolve, reject) => {const req = indexedDB.open(DB_NAME, 1); req.onupgradeneeded = () => {const d = req.result; if (!d.objectStoreNames.contains(STORE)) {const s = d.createObjectStore(STORE, {keyPath: 'id'}); s.createIndex('createdAt', 'createdAt')} }; req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error)})}
+    function tx(mode = 'readonly') {return db.transaction(STORE, mode).objectStore(STORE)}
+    function all() {return new Promise((res, rej) => {const r = tx().getAll(); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error)})}
+    function save(item) {return new Promise((res, rej) => {const r = tx('readwrite').put(item); r.onsuccess = () => res(); r.onerror = () => rej(r.error)})}
+    function remove(id) {return new Promise((res, rej) => {const r = tx('readwrite').delete(id); r.onsuccess = () => res(); r.onerror = () => rej(r.error)})}
+    function toast(msg) {$('toast').textContent = msg; $('toast').style.display = 'block'; clearTimeout(toast.t); toast.t = setTimeout(() => $('toast').style.display = 'none', 2600)}
+    function dateLabel(d, t) {if (!d) return 'Sem data definida'; const dt = new Date(d + 'T00:00:00'); let s = dt.toLocaleDateString('pt-BR', {day: '2-digit', month: 'short'}); if (d === new Date().toLocaleDateString('en-CA')) s = 'Hoje'; if (t) s += ' · ' + t; return s}
+    function escapeHTML(s = '') {return String(s).replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]))}
+    async function render() {
+      const items = await all(); const today = new Date().toLocaleDateString('en-CA'); $('activeCount').textContent = items.filter(x => !x.done).length; $('todayCount').textContent = items.filter(x => !x.done && x.date === today).length; $('doneCount').textContent = items.filter(x => x.done).length;
+      let shown = items.filter(x => currentFilter === 'all' || (currentFilter === 'pending' && !x.done) || (currentFilter === 'done' && x.done) || (currentFilter === 'today' && !x.done && x.date === today));
+      shown.sort((a, b) => Number(a.done) - Number(b.done) || ({high: 0, medium: 1, low: 2}[a.priority] - ({high: 0, medium: 1, low: 2}[b.priority])) || (a.date || '9999').localeCompare(b.date || '9999') || (a.time || '').localeCompare(b.time || ''));
+      $('list').innerHTML = shown.length ? shown.map(x => `<article class="item ${x.done ? 'done' : ''}"><button class="check" data-action="toggle" data-id="${x.id}" aria-label="Concluir">${x.done ? '✓' : ''}</button><div><div class="item-title">${escapeHTML(x.title)}</div>${x.description ? `<div class="note">${escapeHTML(x.description)}</div>` : ''}<div class="meta"><span class="tag">${escapeHTML(dateLabel(x.date, x.time))}</span><span class="tag ${x.priority}">Prioridade ${x.priority === 'high' ? 'alta' : x.priority === 'medium' ? 'média' : 'baixa'}</span></div></div><div class="actions"><button class="iconbtn" data-action="edit" data-id="${x.id}" aria-label="Editar">✎</button><button class="iconbtn" data-action="delete" data-id="${x.id}" aria-label="Excluir">×</button></div></article>`).join('') : '<div class="empty"><b>Nenhum lembrete por aqui.</b>Adicione uma tarefa para começar.</div>';
+    }
+    function openModal(item) {$('reminderForm').reset(); $('editId').value = item?.id || ''; $('modalTitle').textContent = item ? 'Editar lembrete' : 'Novo lembrete'; $('title').value = item?.title || ''; $('description').value = item?.description || ''; $('date').value = item?.date || ''; $('time').value = item?.time || ''; $('priority').value = item?.priority || 'medium'; $('modalBack').classList.add('show'); setTimeout(() => $('title').focus(), 100)}
+    function closeModal() {$('modalBack').classList.remove('show')}
+    $('newBtn').onclick = () => openModal(); $('cancelBtn').onclick = closeModal; $('modalBack').addEventListener('click', e => {if (e.target === $('modalBack')) closeModal()});
+    $('reminderForm').onsubmit = async e => {e.preventDefault(); const id = $('editId').value || crypto.randomUUID(); const old = (await all()).find(x => x.id === id); await save({id, title: $('title').value.trim(), description: $('description').value.trim(), date: $('date').value, time: $('time').value, priority: $('priority').value, done: old?.done || false, createdAt: old?.createdAt || Date.now(), updatedAt: Date.now()}); closeModal(); await render(); toast('Lembrete salvo neste dispositivo.')};
+    $('list').onclick = async e => {const b = e.target.closest('button[data-action]'); if (!b) return; const id = b.dataset.id, action = b.dataset.action, item = (await all()).find(x => x.id === id); if (!item) return; if (action === 'toggle') {item.done = !item.done; await save(item)} if (action === 'edit') openModal(item); if (action === 'delete' && confirm('Excluir este lembrete?')) await remove(id); await render()};
+    $('filters').onclick = e => {const b = e.target.closest('[data-filter]'); if (!b) return; currentFilter = b.dataset.filter; document.querySelectorAll('.filter').forEach(x => x.classList.toggle('active', x === b)); render()};
+    $('exportBtn').onclick = async () => {const data = await all(); const blob = new Blob([JSON.stringify({app: 'OMEGA', version: 1, exportedAt: new Date().toISOString(), reminders: data}, null, 2)], {type: 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'omega-backup-' + new Date().toISOString().slice(0, 10) + '.json'; a.click(); URL.revokeObjectURL(a.href); toast('Backup exportado.')};
+    $('importBtn').onclick = () => $('importFile').click(); $('importFile').onchange = async e => {const f = e.target.files[0]; if (!f) return; try {const data = JSON.parse(await f.text()); if (!Array.isArray(data.reminders)) throw Error(); if (!confirm(`Importar ${data.reminders.length} lembrete(s)? Itens com o mesmo ID serão atualizados.`)) return; for (const item of data.reminders) {if (item.id && item.title) await save(item)} await render(); toast('Backup importado.')} catch {alert('Não foi possível ler esse arquivo de backup.')} e.target.value = ''};
+    $('notifyBtn').onclick = async () => {if (!('Notification' in window)) {toast('Este navegador não oferece notificações.'); return } const p = await Notification.requestPermission(); toast(p === 'granted' ? 'Permissão de notificação ativada.' : 'Permissão não concedida.')};
+
+    let deferredInstallPrompt = null;
+    const installBtn = document.getElementById('installBtn');
+    window.addEventListener('beforeinstallprompt', e => {e.preventDefault(); deferredInstallPrompt = e; installBtn.style.display = 'inline-block'});
+    installBtn.addEventListener('click', async () => {if (!deferredInstallPrompt) {toast('Use o menu do navegador e escolha "Instalar app" ou "Adicionar à tela inicial".'); return } deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice; deferredInstallPrompt = null; installBtn.style.display = 'none'});
+    window.addEventListener('appinstalled', () => {installBtn.style.display = 'none'; toast('O.M.E.G.A. instalada no dispositivo.')});
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(err => console.error('Falha ao registrar Service Worker:', err)));
+    }
+
+    async function init() {if (!('indexedDB' in window)) {alert('Este navegador não oferece armazenamento local compatível.'); return } try {db = await openDB(); await render()} catch (e) {console.error(e); alert('Não foi possível abrir o banco local. Verifique as permissões do navegador.')} } init();
+  </script>
+</body>
+
+</html>
